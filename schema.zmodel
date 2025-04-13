@@ -22,69 +22,59 @@ plugin hooks {
 }
 
 
+/*
+ * Model for a Todo list
+ */
+model List {
+    id        String   @id @default(uuid())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    owner     User     @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+    ownerId   String   @default(auth().id)
+    title     String   @length(1, 100)
+    private   Boolean  @default(false)
+    todos     Todo[]
 
-model Post {
-    id          Int      @id @default(autoincrement())
-    name        String
-    createdAt   DateTime @default(now())
-    updatedAt   DateTime @updatedAt
+    // can be read by owner or space members (only if not private) 
+    @@allow('read', !private)
 
-    createdBy   User     @relation(fields: [createdById], references: [id])
-    createdById String
-
-    @@index([name])
+    // when create, owner must be set to current user, and user must be in the space
+    @@allow('all', owner == auth())
 }
 
-// Necessary for Next auth
-model Account {
-    id                       String  @id @default(cuid())
-    userId                   String
-    type                     String
-    provider                 String
-    providerAccountId        String
-    refresh_token            String? // @db.Text
-    access_token             String? // @db.Text
-    expires_at               Int?
-    token_type               String?
-    scope                    String?
-    id_token                 String? // @db.Text
-    session_state            String?
-    user                     User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-    refresh_token_expires_in Int?
+/*
+ * Model for a single Todo
+ */
+model Todo {
+    id          String    @id @default(uuid())
+    createdAt   DateTime  @default(now())
+    updatedAt   DateTime  @updatedAt
+    owner       User      @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+    ownerId     String    @default(auth().id)
+    list        List      @relation(fields: [listId], references: [id], onDelete: Cascade)
+    listId      String
+    title       String    @length(1, 100)
+    completedAt DateTime?
 
-    @@unique([provider, providerAccountId])
+    @@allow('all', check(list, 'read'))
 }
 
-model Session {
-    id           String   @id @default(cuid())
-    sessionToken String   @unique
-    userId       String
-    expires      DateTime
-    user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-}
 
 model User {
-    id            String    @id @default(cuid())
-    name          String?
-    email         String?   @unique
-    emailVerified DateTime?
-    image         String?
-    accounts      Account[]
-    sessions      Session[]
-    posts         Post[]
-    password      String    @password @omit
+    id       String  @id @default(cuid())
+    name     String?
+    email    String? @unique
+    // accounts      Account[]
+    // sessions      Session[]
+    password String  @password @omit
 
     // everyone can signup, and user profile is also publicly readable
     @@allow('create,read', true)
 
     // only the user can update or delete their own profile
     @@allow('update,delete', auth() == this)
-}
 
-model VerificationToken {
-    identifier String
-    token      String   @unique
-    expires    DateTime
+    todo     Todo[]
 
-    @@unique([identifier, token])
+    list     List[]
 }

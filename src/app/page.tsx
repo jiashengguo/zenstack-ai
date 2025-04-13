@@ -4,6 +4,7 @@ import { type NextPage } from "next";
 import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useChat } from "@ai-sdk/react";
 
 type AuthUser = { id: string; email?: string | null };
 
@@ -51,9 +52,12 @@ const Home: NextPage = () => {
 
         {session?.user ? (
           // welcome & blog posts
-          <div className="flex flex-col">
+          <div className="">
             <Welcome user={session.user} />
             <section className="mt-10"></section>
+            <div className="ring-none mx-auto flex h-svh max-h-svh w-full flex-col items-stretch border-none">
+              <Chat />
+            </div>
           </div>
         ) : (
           // if not logged in
@@ -63,5 +67,30 @@ const Home: NextPage = () => {
     </main>
   );
 };
+
+export function Chat() {
+  const { messages, input, handleInputChange, handleSubmit } = useChat({});
+
+  return (
+    <>
+      {messages.map((message) => (
+        <div key={message.id}>
+          {message.role === "user" ? "User: " : "AI: "}
+          {message.content}
+        </div>
+      ))}
+
+      <form onSubmit={handleSubmit}>
+        <input
+          name="prompt"
+          value={input}
+          onChange={handleInputChange}
+          className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm text-black file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+        />
+        <button type="submit">Submit</button>
+      </form>
+    </>
+  );
+}
 
 export default Home;
