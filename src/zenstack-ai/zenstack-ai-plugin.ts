@@ -4,19 +4,14 @@ import {
   hasAttribute,
   isAuthInvocation,
   isForeignKeyField,
-  requireOption,
-  type PluginOptions,
 } from "@zenstackhq/sdk";
 import {
   isDataModel,
   type DataModel,
-  type Model,
-  DataModelField,
-  DataModelFieldAttribute,
+  type DataModelField,
+  type DataModelFieldAttribute,
 } from "@zenstackhq/sdk/ast";
-import fs from "fs";
-import path from "path";
-import { Project, SourceFile } from "ts-morph";
+import { Project, type SourceFile } from "ts-morph";
 import { streamAst } from "langium";
 
 export const name = "zenstack-ai";
@@ -56,6 +51,11 @@ export class PrismaCRUDGenerator {
     for (const model of dataModels) {
       this.generateModelSchemas(allModelsFile, model);
     }
+    // Generate consolidated schema export after all models have been processed
+    this.generateConsolidatedSchemaExport(allModelsFile, dataModels);
+
+    // Generate the system prompt export
+    this.generateSystemPromptExport(allModelsFile);
 
     return project;
   }
@@ -155,6 +155,51 @@ const ${listRelationFilterName} = z
     this.generateFindManyArgsSchema(sourceFile, model);
     this.generateCreateArgsSchema(sourceFile, model);
     this.generateUpdateArgsSchema(sourceFile, model);
+  }
+
+  // Generate consolidated schema export for all models
+  private generateConsolidatedSchemaExport(
+    sourceFile: SourceFile,
+    dataModels: DataModel[],
+  ): void {
+    // Add comment for the consolidated schema export
+    sourceFile.addStatements("\n// Consolidated schema export for all models");
+
+    // Create the start of the allSchemas object
+    let allSchemasCode = "export const allSchemas = {\n";
+
+    // Add entries for each model
+    for (const model of dataModels) {
+      const modelName = model.name.toLowerCase();
+      allSchemasCode += `  ${modelName}: {
+    findMany: ${model.name}FindManyArgsSchema,
+    update: ${model.name}UpdateArgsSchema,
+    create: ${model.name}CreateArgsSchema
+  },\n`;
+    }
+
+    // Close the allSchemas object
+    allSchemasCode += "};\n\n";
+
+    // Add type definition for the consolidated schemas
+    allSchemasCode +=
+      "// Type for the consolidated schemas\nexport type AllSchemasType = typeof allSchemas;";
+
+    // Add the consolidated export to the source file
+    sourceFile.addStatements(allSchemasCode);
+  }
+
+  // Generate the system prompt export
+  private generateSystemPromptExport(sourceFile: SourceFile): void {
+    const systemPrompt = `
+You are a Database CRUD operator. Based on the user's request to call the individual tools to perform CRUD operations of Prisma client API:
+
+**Instructions:**
+1. Never include ownerId in the query when invoking tools.
+`;
+
+    sourceFile.addStatements(`\n// System prompt for the AI
+export const systemPrompt = \`${systemPrompt.replace(/`/g, "\\`")}\`;`); // Escape backticks in the prompt string
   }
 
   // Generate WhereInput schema dynamically
@@ -447,7 +492,7 @@ ${updateProps!.join(",\n")}
 
     schema += `
   })
-  .describe("prisma client FindManyArgs for ${modelName} model");
+  .describe("Prisma client API \`findMany\` function args for ${modelName} model");
 export type ${modelName}FindManyArgsType = z.infer<typeof ${modelName}FindManyArgsSchema>;`;
 
     sourceFile.addStatements(schema);
@@ -466,7 +511,7 @@ export const ${modelName}CreateArgsSchema = z
   .object({
     data: ${modelName}CreateInput,
   })
-  .describe("\`create\` function of Prisma client API for ${modelName} model");
+  .describe("Prisma client API \`create\` function args for ${modelName} model");
 
 export type ${modelName}CreateArgsSchemaType = z.infer<typeof ${modelName}CreateArgsSchema>;`);
   }
@@ -485,7 +530,7 @@ export const ${modelName}UpdateArgsSchema = z
     data: ${modelName}UpdateInputSchema,
     where: ${modelName}WhereInput,
   })
-  .describe("prisma client update function args for ${modelName} model");
+  .describe("Prisma client API \`update\` function args for ${modelName} model");
 // Type inference helper
 export type ${modelName}UpdateArgsType = z.infer<typeof ${modelName}UpdateArgsSchema>;`);
   }
@@ -502,42 +547,5 @@ export type ${modelName}UpdateArgsType = z.infer<typeof ${modelName}UpdateArgsSc
 
     // find `auth()` in default value expression
     return streamAst(expr).some(isAuthInvocation);
-  }
-}
-
-export default async function generate(model: Model, options: PluginOptions) {
-  // Process options
-  const outputDir = requireOption<string>(options, "output", name);
-
-  if (!fs.existsSync(outputDir)) {
-    fs.mkdirSync(outputDir, { recursive: true });
-  }
-
-  // Get all data models
-  const dataModels = model.declarations.filter((x): x is DataModel =>
-    isDataModel(x),
-  );
-
-  // Create the generator instance
-  const generator = new PrismaCRUDGenerator();
-
-  // Generate the Zod schemas using ts-morph
-  const project = generator.generateZodSchemas(dataModels);
-
-  // Ensure the output directory exists
-  if (!fs.existsSync(outputDir)) {
-    fs.mkdirSync(outputDir, { recursive: true });
-  }
-
-  // Write the combined schemas file
-  const allSchemasFile = project.getSourceFile("all-schemas.ts");
-  if (allSchemasFile) {
-    fs.writeFileSync(
-      path.join(outputDir, "all-schemas.ts"),
-      allSchemasFile.getFullText(),
-    );
-    console.log(
-      `Generated all model schemas at ${path.join(outputDir, "all-schemas.ts")}`,
-    );
   }
 }

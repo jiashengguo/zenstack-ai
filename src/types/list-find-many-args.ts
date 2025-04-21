@@ -239,3 +239,9 @@ export const ListUpdateArgsSchema = z
 
 // Type inference helper
 export type ListUpdateArgsType = z.infer<typeof ListUpdateArgsSchema>;
+
+export const allSchemas = {
+  list: {
+    findMany: ListFindManyArgsSchema,
+  },
+};

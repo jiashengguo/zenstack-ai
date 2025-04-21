@@ -1,0 +1,19 @@
+{
+  "name": "zenstack-ai",
+  "version": "0.1.0",
+  "description": "AI utilities for ZenStack",
+  "main": "index.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc"
+  },
+  "keywords": [
+    "zenstack",
+    "ai",
+    "utilities"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {},
+  "devDependencies": {}
+}

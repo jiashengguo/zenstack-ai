@@ -21,6 +21,10 @@ plugin hooks {
     output = "./src/lib/hooks"
 }
 
+plugin ai {
+    provider = './src/zenstack-ai/dist'
+}
+
 
 /*
  * Model for a Todo list
