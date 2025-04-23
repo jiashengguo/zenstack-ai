@@ -28,66 +28,65 @@ const Signin: NextPage = () => {
   }
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center font-sans">
-      <div className="w-full max-w-md rounded bg-white p-8 shadow">
-        <h1 className="mb-2 text-center text-2xl font-bold leading-tight tracking-tight text-black">
-          Sign In
-        </h1>
-        <p className="mb-8 text-center text-base leading-tight text-gray-500">
+    <div className="flex min-h-screen flex-col items-center justify-center bg-white font-sans">
+      <div className="w-full max-w-md px-8">
+        <h1 className="mb-1 text-center text-3xl font-bold">Sign In</h1>
+        <p className="mb-8 text-center text-gray-500">
           Use your email and password to sign in
         </p>
-        <form
-          className="flex flex-col gap-4"
-          onSubmit={(e) => void onSignin(e)}
-        >
-          <div className="flex flex-col gap-2">
+
+        <form className="space-y-6" onSubmit={(e) => void onSignin(e)}>
+          <div>
             <label
               htmlFor="email"
-              className="text-sm font-medium text-gray-700"
+              className="mb-1 block text-sm font-medium text-gray-700"
             >
               Email Address
             </label>
             <input
               id="email"
               type="email"
-              placeholder="user@acme.com"
               value={email}
               onChange={(e) => setEmail(e.currentTarget.value)}
-              className="rounded border border-gray-300 bg-gray-100 p-2 text-base focus:border-black focus:outline-none"
+              className="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-400"
+              required
             />
           </div>
-          <div className="flex flex-col gap-2">
+
+          <div>
             <label
               htmlFor="password"
-              className="text-sm font-medium text-gray-700"
+              className="mb-1 block text-sm font-medium text-gray-700"
             >
               Password
             </label>
             <input
               id="password"
               type="password"
-              placeholder=""
               value={password}
               onChange={(e) => setPassword(e.currentTarget.value)}
-              className="rounded border border-gray-300 bg-gray-100 p-2 text-base focus:border-black focus:outline-none"
+              className="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-400"
+              required
             />
           </div>
+
           <button
             type="submit"
-            className="mt-2 rounded bg-black py-2 text-base font-semibold text-white transition hover:bg-gray-800"
+            className="w-full rounded-md bg-black px-4 py-2 font-medium text-white hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-400"
           >
             Sign in
           </button>
         </form>
-        <div className="mt-6 text-center text-base text-gray-600">
-          Don&apos;t have an account?{" "}
+
+        <div className="mt-8 text-center text-sm">
+          <span className="text-gray-500">Don&apos;t have an account?</span>{" "}
           <Link
             href="/signup"
-            className="font-semibold text-black hover:underline"
+            className="font-medium text-black hover:underline"
           >
             Sign up
           </Link>{" "}
-          for free.
+          <span className="text-gray-500">for free.</span>
         </div>
       </div>
     </div>
