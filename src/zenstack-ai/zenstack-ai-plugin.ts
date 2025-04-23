@@ -20,6 +20,13 @@ export class PrismaCRUDGenerator {
   // Keep track of already defined relation filters to avoid duplicates
   private definedRelationFilters: Set<string> = new Set<string>();
 
+  private readonly systemPrompt = `
+You are a Database CRUD operator. Based on the user's request to call the individual tools to perform CRUD operations of Prisma client API:
+
+**Instructions:**
+1. When invoking the query tools \`findMany\`, if user asks for "my" and "I", simply ignore it when generating query parameters.
+`;
+
   // Generate schemas using ts-morph
   public generateZodSchemas(dataModels: DataModel[]): Project {
     const project = new Project({
@@ -191,15 +198,8 @@ const ${listRelationFilterName} = z
 
   // Generate the system prompt export
   private generateSystemPromptExport(sourceFile: SourceFile): void {
-    const systemPrompt = `
-You are a Database CRUD operator. Based on the user's request to call the individual tools to perform CRUD operations of Prisma client API:
-
-**Instructions:**
-1. Never include ownerId in the query when invoking tools.
-`;
-
     sourceFile.addStatements(`\n// System prompt for the AI
-export const systemPrompt = \`${systemPrompt.replace(/`/g, "\\`")}\`;`); // Escape backticks in the prompt string
+export const systemPrompt = \`${this.systemPrompt.replace(/`/g, "\\`")}\`;`); // Escape backticks in the prompt string
   }
 
   // Generate WhereInput schema dynamically
