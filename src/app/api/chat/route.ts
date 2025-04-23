@@ -1,9 +1,9 @@
-import { type CoreMessage, streamText, Tool, tool, zodSchema } from "ai";
+import { type CoreMessage, streamText, type Tool, tool, zodSchema } from "ai";
 import { openai } from "@ai-sdk/openai";
-import { z } from "zod";
+import { type z } from "zod";
 import { db } from "~/server/db";
 import { allSchemas, systemPrompt } from "../../../../zenstack-ai/all-schemas";
-import { enhance, PrismaClient } from "@zenstackhq/runtime";
+import { enhance, type PrismaClient } from "@zenstackhq/runtime";
 import { auth } from "../../../server/auth";
 
 // Allow streaming responses up to 30 seconds
@@ -63,7 +63,7 @@ export async function POST(req: Request) {
   });
 }
 
-export function errorHandler(error: unknown) {
+function errorHandler(error: unknown) {
   console.error("Error:", error);
   if (error == null) {
     return "unknown error";

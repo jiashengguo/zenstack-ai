@@ -5,6 +5,7 @@ import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
 import { useCreateUser } from "~/lib/hooks";
+import Link from "next/link";
 
 const Signup: NextPage = () => {
   const [email, setEmail] = useState("");
@@ -35,42 +36,68 @@ const Signup: NextPage = () => {
   }
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c]">
-      <h1 className="text-5xl font-extrabold text-white">Sign up</h1>
-      <form
-        className="mt-16 flex flex-col gap-8 text-2xl"
-        onSubmit={(e) => void onSignup(e)}
-      >
-        <div>
-          <label htmlFor="email" className="inline-block w-32 text-white">
-            Email
-          </label>
-          <input
-            id="email"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.currentTarget.value)}
-            className="ml-4 w-72 rounded border p-2"
-          />
+    <div className="flex min-h-screen flex-col items-center justify-center font-sans">
+      <div className="w-full max-w-md rounded bg-white p-8 shadow">
+        <h1 className="mb-2 text-center text-2xl font-bold leading-tight tracking-tight text-black">
+          Sign Up
+        </h1>
+        <p className="mb-8 text-center text-base leading-tight text-gray-500">
+          Create an account with your email and password
+        </p>
+        <form
+          className="flex flex-col gap-4"
+          onSubmit={(e) => void onSignup(e)}
+        >
+          <div className="flex flex-col gap-2">
+            <label
+              htmlFor="email"
+              className="text-sm font-medium text-gray-700"
+            >
+              Email Address
+            </label>
+            <input
+              id="email"
+              type="email"
+              placeholder="user@acme.com"
+              value={email}
+              onChange={(e) => setEmail(e.currentTarget.value)}
+              className="rounded border border-gray-300 bg-gray-100 p-2 text-base focus:border-black focus:outline-none"
+            />
+          </div>
+          <div className="flex flex-col gap-2">
+            <label
+              htmlFor="password"
+              className="text-sm font-medium text-gray-700"
+            >
+              Password
+            </label>
+            <input
+              id="password"
+              type="password"
+              placeholder=""
+              value={password}
+              onChange={(e) => setPassword(e.currentTarget.value)}
+              className="rounded border border-gray-300 bg-gray-100 p-2 text-base focus:border-black focus:outline-none"
+            />
+          </div>
+          <button
+            type="submit"
+            className="mt-2 rounded bg-black py-2 text-base font-semibold text-white transition hover:bg-gray-800"
+          >
+            Sign Up
+          </button>
+        </form>
+        <div className="mt-6 text-center text-base text-gray-600">
+          Already have an account?{" "}
+          <Link
+            href="/signin"
+            className="font-semibold text-black hover:underline"
+          >
+            Sign in
+          </Link>{" "}
+          instead.
         </div>
-        <div>
-          <label htmlFor="password" className="inline-block w-32 text-white">
-            Password
-          </label>
-          <input
-            id="password"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.currentTarget.value)}
-            className="ml-4 w-72 rounded border p-2"
-          />
-        </div>
-        <input
-          type="submit"
-          value="Create account"
-          className="cursor-pointer rounded border border-gray-500 py-4 text-white"
-        />
-      </form>
+      </div>
     </div>
   );
 };
