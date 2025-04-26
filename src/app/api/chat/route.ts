@@ -2,7 +2,7 @@ import { type CoreMessage, streamText, type Tool, tool, zodSchema } from "ai";
 import { openai } from "@ai-sdk/openai";
 import { type z } from "zod";
 import { db } from "~/server/db";
-import { allSchemas, systemPrompt } from "../../../../zenstack-ai/all-schemas";
+import { allSchemas, systemPrompt } from "../../../../crud-zod";
 import { enhance, type PrismaClient } from "@zenstackhq/runtime";
 import { auth } from "../../../server/auth";
 
@@ -30,7 +30,7 @@ async function createToolsFromSchema(prisma: PrismaClient) {
         execute: async (input: unknown) => {
           console.log(
             `Executing ${modelName}${functionName} with input:`,
-            input,
+            JSON.stringify(input),
           );
           // eslint-disable-next-line
           const result = (prisma as any)[modelName][functionName](input);
