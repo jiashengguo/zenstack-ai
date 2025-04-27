@@ -8,6 +8,7 @@ import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Copy, ThumbsUp, ThumbsDown, Send } from "lucide-react";
 import { useRef, useEffect } from "react";
+import { Markdown } from "../components/markdown";
 
 const Home: NextPage = () => {
   const { data: session, status } = useSession();
@@ -95,7 +96,7 @@ function Chat() {
               ) : (
                 <div className="flex flex-col gap-1">
                   <span className="max-w-xs break-words rounded-2xl bg-gray-100 px-4 py-2 text-sm text-gray-900">
-                    {message.content}
+                    <Markdown>{message.content}</Markdown>
                   </span>
                   <div className="mt-1 flex gap-1">
                     <Button variant="ghost" size="icon" className="h-7 w-7 p-0">
