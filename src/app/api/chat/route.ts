@@ -29,7 +29,7 @@ async function createToolsFromSchema(prisma: PrismaClient) {
         parameters: recursiveType,
         execute: async (input: unknown) => {
           console.log(
-            `Executing ${modelName}${functionName} with input:`,
+            `Executing ${modelName}.${functionName} with input:`,
             JSON.stringify(input),
           );
           // eslint-disable-next-line
@@ -51,7 +51,7 @@ export async function POST(req: Request) {
   const tools = await createToolsFromSchema(prisma);
 
   const result = streamText({
-    model: openai("gpt-4"),
+    model: openai("gpt-4.1"),
     system: systemPrompt,
     messages,
     maxSteps: 3,
