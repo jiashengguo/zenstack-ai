@@ -9,6 +9,7 @@ import { Input } from "~/components/ui/input";
 import { Copy, ThumbsUp, ThumbsDown, Send } from "lucide-react";
 import { useRef, useEffect } from "react";
 import { Markdown } from "../components/markdown";
+import { useScrollToBottom } from "~/components/use-scroll-to-bottom";
 
 const Home: NextPage = () => {
   const { data: session, status } = useSession();
@@ -70,21 +71,16 @@ const Home: NextPage = () => {
 function Chat() {
   const { messages, input, handleInputChange, handleSubmit } = useChat({});
   const inputRef = useRef<HTMLInputElement>(null);
-  const messagesEndRef = useRef<HTMLDivElement>(null);
-
-  // Scroll to bottom whenever messages change
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
-
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
+  const [messagesContainerRef, messagesEndRef] =
+    useScrollToBottom<HTMLDivElement>();
 
   return (
     <>
       <div className="mx-auto w-full max-w-xl">
-        <div className="mt-2 flex flex-col gap-4 pb-4">
+        <div
+          ref={messagesContainerRef}
+          className="mt-2 flex flex-col gap-4 pb-4"
+        >
           {messages.map((message) => (
             <div key={message.id} className="flex items-start gap-2">
               {message.role === "user" ? (

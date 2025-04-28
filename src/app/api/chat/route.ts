@@ -2,7 +2,7 @@ import { type CoreMessage, streamText, type Tool, tool, zodSchema } from "ai";
 import { openai } from "@ai-sdk/openai";
 import { type z } from "zod";
 import { db } from "~/server/db";
-import { allSchemas, systemPrompt } from "../../../../crud-zod";
+import { allSchemas, getSystemPrompt } from "../../../../crud-zod";
 import { enhance, type PrismaClient } from "@zenstackhq/runtime";
 import { auth } from "../../../server/auth";
 
@@ -47,13 +47,16 @@ export async function POST(req: Request) {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const { messages }: { messages: CoreMessage[] } = await req.json();
 
-  const prisma = await getPrisma();
+  const authObj = await auth();
+  console.log("authObj", JSON.stringify(authObj));
+  const prisma = await enhance(db, { user: authObj?.user });
   const tools = await createToolsFromSchema(prisma);
+  const systemPrompt = getSystemPrompt(authObj?.user.id!);
 
   const result = streamText({
     model: openai("gpt-4.1"),
     system: systemPrompt,
-    messages,
+    messages: messages,
     maxSteps: 3,
     tools: tools,
   });

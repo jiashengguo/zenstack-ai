@@ -65,7 +65,7 @@
     "tsx": "^4.19.3",
     "typescript": "^5.5.3",
     "zenstack": "2.12.3",
-    "zenstack-crudzod": "^0.2.0"
+    "zenstack-crudzod": "^0.2.1"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
