@@ -1,29 +1,75 @@
-# Create T3 App
+<div align="center">
+<img width="1086" alt="Image" src="https://github.com/user-attachments/assets/384aadef-e759-4412-bd16-f64dea7a3f70" />
+    <h1>ZenStack AI Chat Todo</h1>
+</div>
 
-This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
+A full-stack AI chat Todo app built with Next.js, ZenStack, and Vercel AI SDK. The app demonstrates how to easily add AI-chat feature for the application with minimal code using ZenStack's powerful data modeling and access control.
 
-## What's next? How do I make an app with this?
+## Features
 
-We try to keep this project as simple as possible, so you can start with just the scaffolding we set up for you, and add additional things later when they become necessary.
+- **User Signup/Signin** - User authentication with NextAuth
+- **AI Chat Todo Management** - Chat assistant to manage todos safely
+- **Minimal Code Chat UI** - Build chat interfaces with significantly less code using `zenstack-crudzod` plugin
 
-If you are not familiar with the different technologies used in this project, please refer to the respective docs. If you still are in the wind, please join our [Discord](https://t3.gg/discord) and ask for help.
+## AI Chat Implementation
 
-- [Next.js](https://nextjs.org)
-- [NextAuth.js](https://next-auth.js.org)
-- [Prisma](https://prisma.io)
-- [Drizzle](https://orm.drizzle.team)
-- [Tailwind CSS](https://tailwindcss.com)
-- [tRPC](https://trpc.io)
+This project showcases how to quickly build AI chat functionality with minimal code:
 
-## Learn More
+- **Schema-Driven Development**: The `schema.zmodel` defines your data models and permissions
+- **Generated CRUD Operations**: The `zenstack-crudzod` plugin automatically generates Zod schemas for the authorized CRUD API
+- **Streamlined Development**: Connect AI models to your data with minimal boilerplate
 
-To learn more about the [T3 Stack](https://create.t3.gg/), take a look at the following resources:
+## Technologies
 
-- [Documentation](https://create.t3.gg/)
-- [Learn the T3 Stack](https://create.t3.gg/en/faq#what-learning-resources-are-currently-available) — Check out these awesome tutorials
+- [Next.js](https://nextjs.org/) - React framework
+- [ZenStack](https://zenstack.dev/) - Full-stack toolkit with access control
+- [AI SDK](https://sdk.vercel.ai/) - AI integration for chat features
+- [zenstack-crudzod](https://github.com/jiashengguo/zenstack-crudzod) - Generate typesafe Zod schemas and APIs
 
-You can check out the [create-t3-app GitHub repository](https://github.com/t3-oss/create-t3-app) — your feedback and contributions are welcome!
+## Getting Started
 
-## How do I deploy this?
+### Installation
 
-Follow our deployment guides for [Vercel](https://create.t3.gg/en/deployment/vercel), [Netlify](https://create.t3.gg/en/deployment/netlify) and [Docker](https://create.t3.gg/en/deployment/docker) for more information.
+1. Install dependencies
+
+   ```bash
+   npm install
+   ```
+
+2. Configure environment variables
+   Rename `.env.example` to `.env` and replace your OpenAI Key with:
+
+   ```bash
+   OPENAI_API_KEY="write-your-openai-api-key-here"
+   ```
+
+3. Generate server and client-side code from model
+
+   ```bash
+   npm run generate
+   ```
+
+4. Synchronize database schema
+
+   ```bash
+   npm run db:push
+   ```
+
+5. Seed the database
+   It create 3 users with todos. The password for all users is `123456`.
+
+   ```typescript
+   - Alex   (Backend Dev): alex@zenstack.dev
+   - Taylor (FrontEnd Dev): taylor@zenstack.dev
+   - Morgan (Product Lead): morgan@zenstack.dev
+   ```
+
+   ```bash
+   npm run db:seed
+   ```
+
+6. Start the development server
+
+   ```bash
+   npm run dev
+   ```

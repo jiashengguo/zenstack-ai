@@ -76,7 +76,7 @@ function Chat() {
 
   return (
     <>
-      <div className="mx-auto w-full max-w-xl">
+      <div className="mx-auto w-full max-w-5xl">
         <div
           ref={messagesContainerRef}
           className="mt-2 flex flex-col gap-4 pb-4"
@@ -91,7 +91,7 @@ function Chat() {
                 </div>
               ) : (
                 <div className="flex flex-col gap-1">
-                  <span className="max-w-xs break-words rounded-2xl bg-gray-100 px-4 py-2 text-sm text-gray-900">
+                  <span className="break-words rounded-2xl bg-gray-100 px-4 py-2 text-sm text-gray-900">
                     <Markdown>{message.content}</Markdown>
                   </span>
                   <div className="mt-1 flex gap-1">
@@ -114,7 +114,7 @@ function Chat() {
 
         {/* Fixed Input Box */}
         <div className="absolute bottom-0 left-0 right-0 bg-white">
-          <div className="mx-auto max-w-xl px-4 pb-8 pt-4">
+          <div className="mx-auto max-w-5xl px-4 pb-8 pt-4">
             <form
               onSubmit={handleSubmit}
               className="flex items-center gap-2 rounded-lg border border-gray-200 px-2 py-1"

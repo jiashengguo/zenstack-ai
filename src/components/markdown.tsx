@@ -5,7 +5,6 @@ import remarkGfm from "remark-gfm";
 
 const components: Partial<Components> = {
   // @ts-expect-error
-
   pre: ({ children }) => <>{children}</>,
   ol: ({ node, children, ...props }) => {
     return (

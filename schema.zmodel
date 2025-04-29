@@ -1,16 +1,9 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
     provider = "prisma-client-js"
 }
 
 datasource db {
     provider = "sqlite"
-    // NOTE: When using mysql or sqlserver, uncomment the @db.Text annotations in model Account below
-    // Further reading:
-    // https://next-auth.js.org/adapters/prisma#create-the-prisma-schema
-    // https://www.prisma.io/docs/reference/api-reference/prisma-schema-reference#string
     url      = env("DATABASE_URL")
 }
 
@@ -42,7 +35,7 @@ model List {
     // can be read by owner or space members (only if not private) 
     @@allow('read', !private)
 
-    // when create, owner must be set to current user, and user must be in the space
+    // owner can do anything
     @@allow('all', owner == auth())
 }
 
@@ -60,6 +53,7 @@ model Todo {
     title       String    @length(1, 100)
     completedAt DateTime?
 
+    // full access if the parent list is readable
     @@allow('all', check(list, 'read'))
 }
 
@@ -68,17 +62,12 @@ model User {
     id       String  @id @default(cuid())
     name     String?
     email    String? @unique
-    // accounts      Account[]
-    // sessions      Session[]
     password String  @password @omit
+    todo     Todo[]
+    list     List[]
 
     // everyone can signup, and user profile is also publicly readable
     @@allow('create,read', true)
-
     // only the user can update or delete their own profile
     @@allow('update,delete', auth() == this)
-
-    todo     Todo[]
-
-    list     List[]
 }

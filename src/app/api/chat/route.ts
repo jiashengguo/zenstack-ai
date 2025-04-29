@@ -9,12 +9,6 @@ import { auth } from "../../../server/auth";
 // Allow streaming responses up to 30 seconds
 export const maxDuration = 10;
 
-async function getPrisma() {
-  const authObj = await auth();
-  console.log("authObj", JSON.stringify(authObj));
-  return enhance(db, { user: authObj?.user });
-}
-
 async function createToolsFromSchema(prisma: PrismaClient) {
   const tools: Record<string, Tool> = {};
 
@@ -32,10 +26,10 @@ async function createToolsFromSchema(prisma: PrismaClient) {
             `Executing ${modelName}.${functionName} with input:`,
             JSON.stringify(input),
           );
-          // eslint-disable-next-line
+          /* eslint-disable */
           const result = (prisma as any)[modelName][functionName](input);
-          // eslint-disable-next-line
           return result;
+          /* eslint-enable */
         },
       });
     }
@@ -49,9 +43,10 @@ export async function POST(req: Request) {
 
   const authObj = await auth();
   console.log("authObj", JSON.stringify(authObj));
-  const prisma = await enhance(db, { user: authObj?.user });
-  const tools = await createToolsFromSchema(prisma);
-  const systemPrompt = getSystemPrompt(authObj?.user.id!);
+  const enhancedPrisma = enhance(db, { user: authObj?.user });
+  const tools = await createToolsFromSchema(enhancedPrisma);
+  // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
+  const systemPrompt = getSystemPrompt(authObj?.user?.id!);
 
   const result = streamText({
     model: openai("gpt-4.1"),
