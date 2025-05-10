@@ -2,24 +2,31 @@ import { type CoreMessage, streamText, type Tool, tool, zodSchema } from "ai";
 import { openai } from "@ai-sdk/openai";
 import { type z } from "zod";
 import { db } from "~/server/db";
-import { allSchemas, getSystemPrompt } from "../../../../crud-zod";
 import { enhance, type PrismaClient } from "@zenstackhq/runtime";
 import { auth } from "../../../server/auth";
+import prismaInputSchema from "@zenstackhq/runtime/zod/input";
 
 // Allow streaming responses up to 30 seconds
 export const maxDuration = 10;
 
-async function createToolsFromSchema(prisma: PrismaClient) {
+async function createToolsFromZodSchema(prisma: PrismaClient) {
   const tools: Record<string, Tool> = {};
 
-  for (const [modelName, functions] of Object.entries(allSchemas)) {
-    for (const [functionName, functionSchema] of Object.entries(functions)) {
+  const functionNames = ["findMany", "createMany", "deleteMany", "updateMany"];
+
+  for (const [inputTypeName, functions] of Object.entries(prismaInputSchema)) {
+    // remove the postfix InputSchema from the model name
+    const modelName = inputTypeName.replace("InputSchema", "");
+
+    for (const [functionName, functionSchema] of Object.entries(
+      functions,
+    ).filter((x) => functionNames.includes(x[0]))) {
       const zodType = functionSchema as z.ZodObject<z.ZodRawShape>;
       const recursiveType = zodSchema(zodType, {
         useReferences: true,
       });
-      tools[`${modelName}${functionName}`] = tool({
-        description: zodType.description,
+      tools[`${modelName}_${functionName}`] = tool({
+        description: `Prisma client API '${functionName}' function arg for model '${modelName}'`,
         parameters: recursiveType,
         execute: async (input: unknown) => {
           console.log(
@@ -34,6 +41,7 @@ async function createToolsFromSchema(prisma: PrismaClient) {
       });
     }
   }
+
   return tools;
 }
 
@@ -44,9 +52,14 @@ export async function POST(req: Request) {
   const authObj = await auth();
   console.log("authObj", JSON.stringify(authObj));
   const enhancedPrisma = enhance(db, { user: authObj?.user });
-  const tools = await createToolsFromSchema(enhancedPrisma);
-  // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
-  const systemPrompt = getSystemPrompt(authObj?.user?.id!);
+  const tools = await createToolsFromZodSchema(enhancedPrisma);
+  const systemPrompt = `
+You are a application operation assistant. Based on the user's request to call the individual tools to perform CRUD operations of Prisma client API:
+
+**Instructions:**
+1. When invoking the query tools 'findMany', if user asks for "my" and "I", the current userId is ${authObj?.user.id}
+2. If the response contains the data of query, use markdown format to display the data clearly.
+`;
 
   const result = streamText({
     model: openai("gpt-4.1"),

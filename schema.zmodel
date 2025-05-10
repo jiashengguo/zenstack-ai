@@ -14,8 +14,8 @@ plugin hooks {
     output = "./src/lib/hooks"
 }
 
-plugin crudZod {
-    provider = 'zenstack-crudzod'
+plugin zod {
+    provider = '@core/zod'
 }
 
 
