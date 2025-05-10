@@ -16,7 +16,7 @@ A full-stack AI chat Todo app built with Next.js, ZenStack, and Vercel AI SDK. T
 This project showcases how to quickly build AI chat functionality with minimal code:
 
 - **Schema-Driven Development**: The `schema.zmodel` defines your data models and permissions
-- **Generated CRUD Operations**: The `zenstack-crudzod` plugin automatically generates Zod schemas for the authorized CRUD API
+- **Generated CRUD Operations**: The `@core/zod` plugin automatically generates Zod schemas for input arguments of authorized CRUD operations
 - **Streamlined Development**: Connect AI models to your data with minimal boilerplate
 
 ## Technologies

@@ -26,7 +26,7 @@ async function createToolsFromZodSchema(prisma: PrismaClient) {
         useReferences: true,
       });
       tools[`${modelName}_${functionName}`] = tool({
-        description: `Prisma client API '${functionName}' function arg for model '${modelName}'`,
+        description: `Prisma client API '${functionName}' function input argument for model '${modelName}'`,
         parameters: recursiveType,
         execute: async (input: unknown) => {
           console.log(
@@ -59,6 +59,9 @@ You are a application operation assistant. Based on the user's request to call t
 **Instructions:**
 1. When invoking the query tools 'findMany', if user asks for "my" and "I", the current userId is ${authObj?.user.id}
 2. If the response contains the data of query, use markdown format to display the data clearly.
+3. When display the list of data, don't display original id of the model unless user asks for it. Use the natural number starting from 1 instead.
+4. When create or update data for 'Date' optional field, set it to '${new Date().toISOString()}' if user doesn't provide value.
+5. When create new record, strictly follow the input schema, don't ask or add any other fields.
 `;
 
   const result = streamText({

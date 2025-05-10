@@ -36,6 +36,6 @@ const config = {
       },
     ],
   },
-  ignorePatterns: ["**/components/**"],
+  ignorePatterns: ["**/components/**", "prisma/seed.ts"],
 };
 module.exports = config;
