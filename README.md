@@ -9,7 +9,6 @@ A full-stack AI chat Todo app built with Next.js, ZenStack, and Vercel AI SDK. T
 
 - **User Signup/Signin** - User authentication with NextAuth
 - **AI Chat Todo Management** - Chat assistant to manage todos safely
-- **Minimal Code Chat UI** - Build chat interfaces with significantly less code using `zenstack-crudzod` plugin
 
 ## AI Chat Implementation
 
@@ -24,7 +23,6 @@ This project showcases how to quickly build AI chat functionality with minimal c
 - [Next.js](https://nextjs.org/) - React framework
 - [ZenStack](https://zenstack.dev/) - Full-stack toolkit with access control
 - [AI SDK](https://sdk.vercel.ai/) - AI integration for chat features
-- [zenstack-crudzod](https://github.com/jiashengguo/zenstack-crudzod) - Generate typesafe Zod schemas and APIs
 
 ## Getting Started
 
@@ -43,7 +41,7 @@ This project showcases how to quickly build AI chat functionality with minimal c
    OPENAI_API_KEY="write-your-openai-api-key-here"
    ```
 
-3. Generate server and client-side code from model
+3. Generate Prisma client and Zod schemas
 
    ```bash
    npm run generate
