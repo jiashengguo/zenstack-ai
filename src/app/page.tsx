@@ -69,7 +69,9 @@ const Home: NextPage = () => {
 };
 
 function Chat() {
-  const { messages, input, handleInputChange, handleSubmit } = useChat({});
+  const { messages, input, handleInputChange, handleSubmit, status } = useChat(
+    {},
+  );
   const inputRef = useRef<HTMLInputElement>(null);
   const [messagesContainerRef, messagesEndRef] =
     useScrollToBottom<HTMLDivElement>();
@@ -94,17 +96,31 @@ function Chat() {
                   <span className="break-words rounded-2xl bg-gray-100 px-4 py-2 text-sm text-gray-900">
                     <Markdown>{message.content}</Markdown>
                   </span>
-                  <div className="mt-1 flex gap-1">
-                    <Button variant="ghost" size="icon" className="h-7 w-7 p-0">
-                      <Copy className="h-4 w-4" />
-                    </Button>
-                    <Button variant="ghost" size="icon" className="h-7 w-7 p-0">
-                      <ThumbsUp className="h-4 w-4" />
-                    </Button>
-                    <Button variant="ghost" size="icon" className="h-7 w-7 p-0">
-                      <ThumbsDown className="h-4 w-4" />
-                    </Button>
-                  </div>
+                  {status === "ready" && (
+                    <div className="mt-1 flex gap-1">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-7 w-7 p-0"
+                      >
+                        <Copy className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-7 w-7 p-0"
+                      >
+                        <ThumbsUp className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-7 w-7 p-0"
+                      >
+                        <ThumbsDown className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  )}
                 </div>
               )}
             </div>
