@@ -7,13 +7,6 @@ datasource db {
     url      = env("DATABASE_URL")
 }
 
-plugin hooks {
-    provider = '@zenstackhq/tanstack-query'
-    target = 'react'
-    version = 'v5'
-    output = "./src/lib/hooks"
-}
-
 plugin zod {
     provider = '@core/zod'
 }

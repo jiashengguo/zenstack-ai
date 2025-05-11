@@ -4,7 +4,6 @@ import ReactMarkdown, { type Components } from "react-markdown";
 import remarkGfm from "remark-gfm";
 
 const components: Partial<Components> = {
-  // @ts-expect-error
   pre: ({ children }) => <>{children}</>,
   ol: ({ node, children, ...props }) => {
     return (

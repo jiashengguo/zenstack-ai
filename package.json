@@ -31,8 +31,6 @@
     "@tanstack/react-query": "^5.68.0",
     "@types/bcryptjs": "^2.4.6",
     "@zenstackhq/runtime": "2.12.3",
-    "@zenstackhq/server": "^2.12.3",
-    "@zenstackhq/tanstack-query": "^2.12.3",
     "ai": "^4.1.61",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",

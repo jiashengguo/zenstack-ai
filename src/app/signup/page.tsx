@@ -4,35 +4,35 @@ import type { NextPage } from "next";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
-import { useCreateUser } from "~/lib/hooks";
 import Link from "next/link";
+import { signupAction } from "./actions";
 
 const Signup: NextPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { mutateAsync: signup } = useCreateUser();
   const router = useRouter();
 
   async function onSignup(e: FormEvent) {
     e.preventDefault();
     try {
-      await signup({ data: { email, password } });
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (err: any) {
-      console.error(err);
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      if (err.info?.prisma && err.info?.code === "P2002") {
-        // P2002 is Prisma's error code for unique constraint violations
-        alert("User already exists");
-      } else {
-        alert("An unknown error occurred");
-      }
-      return;
-    }
+      await signupAction({ email, password });
+      // Then sign in to create a session
+      const result = await signIn("credentials", {
+        redirect: false,
+        email,
+        password,
+      });
 
-    // signin to create a session
-    await signIn("credentials", { redirect: false, email, password });
-    router.push("/");
+      if (result?.ok) {
+        router.push("/");
+      } else {
+        alert("Failed to sign in after account creation");
+      }
+    } catch (e) {
+      const errorMessage =
+        e instanceof Error ? e.message : "An unknown error occurred";
+      alert(errorMessage);
+    }
   }
 
   return (
