@@ -1,5 +1,5 @@
 <div align="center">
-<img width="1086" alt="Image" src="https://github.com/user-attachments/assets/384aadef-e759-4412-bd16-f64dea7a3f70" />
+<img width="1086" alt="Image" src="https://github.com/user-attachments/assets/e8fb93a9-bed6-4475-b82f-1ac8eb152800" />
     <h1>ZenStack AI Chat Todo</h1>
 </div>
 
@@ -22,6 +22,7 @@ This project showcases how to quickly build AI chat functionality with minimal c
 
 - [Next.js](https://nextjs.org/) - React framework
 - [ZenStack](https://zenstack.dev/) - Full-stack toolkit with access control
+- [NextAuth](https://next-auth.js.org/) - Authentication for Next.js
 - [AI SDK](https://sdk.vercel.ai/) - AI integration for chat features
 
 ## Getting Started

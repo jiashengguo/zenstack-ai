@@ -11,32 +11,29 @@ export const maxDuration = 10;
 
 async function createToolsFromZodSchema(prisma: PrismaClient) {
   const tools: Record<string, Tool> = {};
-
   const functionNames = ["findMany", "createMany", "deleteMany", "updateMany"];
-
   for (const [inputTypeName, functions] of Object.entries(prismaInputSchema)) {
     // remove the postfix InputSchema from the model name
     const modelName = inputTypeName.replace("InputSchema", "");
-
     for (const [functionName, functionSchema] of Object.entries(
       functions,
     ).filter((x) => functionNames.includes(x[0]))) {
-      const zodType = functionSchema as z.ZodObject<z.ZodRawShape>;
-      const recursiveType = zodSchema(zodType, {
-        useReferences: true,
-      });
+      const functionParameterType = zodSchema(
+        functionSchema as z.ZodObject<z.ZodRawShape>,
+        {
+          useReferences: true,
+        },
+      );
       tools[`${modelName}_${functionName}`] = tool({
         description: `Prisma client API '${functionName}' function input argument for model '${modelName}'`,
-        parameters: recursiveType,
+        parameters: functionParameterType,
         execute: async (input: unknown) => {
           console.log(
             `Executing ${modelName}.${functionName} with input:`,
             JSON.stringify(input),
           );
-          /* eslint-disable */
-          const result = (prisma as any)[modelName][functionName](input);
-          return result;
-          /* eslint-enable */
+          // eslint-disable-next-line
+          return (prisma as any)[modelName][functionName](input);
         },
       });
     }
@@ -50,28 +47,21 @@ export async function POST(req: Request) {
   const { messages }: { messages: CoreMessage[] } = await req.json();
 
   const authObj = await auth();
-  console.log("authObj", JSON.stringify(authObj));
   const enhancedPrisma = enhance(db, { user: authObj?.user });
   const tools = await createToolsFromZodSchema(enhancedPrisma);
   const systemPrompt = `
 You are an assistant that helps users perform database operations using Prisma client API. Your job is to call the appropriate tools to execute CRUD (Create, Read, Update, Delete) operations based on user requests.
-
 ## Key Guidelines:
-
 1. **User Context Handling**
    - When a user says "my" or "I" in queries using the 'findMany' tool, automatically use their ID (${authObj?.user.id}) as the reference
-
 2. **Data Presentation**
    - Present query results in clear markdown format tables or lists
    - For listing data, replace technical IDs with simple sequential numbers (1, 2, 3...) unless specifically asked to show original IDs
-
 3. **Date Field Handling**
    - For any optional Date fields during create/update operations, use the current timestamp (${new Date().toISOString()}) when user doesn't specify a value
-
 4. **Data Creation Rules**
    - When creating new records, strictly adhere to the required input schema
    - Do not request or add fields that aren't part of the schema
-
 Your primary function is to translate user requests into the appropriate Prisma API calls and present the results in a user-friendly format.
 `;
 
