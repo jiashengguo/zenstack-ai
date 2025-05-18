@@ -42,6 +42,9 @@ This project showcases how to quickly build AI chat functionality with minimal c
    OPENAI_API_KEY="write-your-openai-api-key-here"
    ```
 
+   > If you want to use a different LLM provider rather than OpenAI, You can easily change it in the `src/app/api/chat/route.ts`
+   > follow the [AI SDK Providers Doc](https://ai-sdk.dev/providers/ai-sdk-providers).
+
 3. Generate Prisma client and Zod schemas
 
    ```bash
